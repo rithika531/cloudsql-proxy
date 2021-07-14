@@ -32,7 +32,7 @@ import (
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/fuse"
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/proxy"
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/util"
-	sqladmin "google.golang.org/api/sqladmin/v1beta4"
+	sqladmin "google.golang.org/api/sqladmin/v1"
 )
 
 // WatchInstances handles the lifecycle of local sockets used for proxying
@@ -270,7 +270,7 @@ func parseInstanceConfig(dir, instance string, cl *http.Client) (instanceConfig,
 	if *host != "" {
 		sql.BasePath = *host
 	}
-	inst, err := sql.Instances.Get(proj, regionName).Do()
+	inst, err := sql.Projects.Instances.Get(proj, regionName).Do()
 	if err != nil {
 		return instanceConfig{}, err
 	}

@@ -33,7 +33,7 @@ import (
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/util"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/googleapi"
-	sqladmin "google.golang.org/api/sqladmin/v1beta4"
+	sqladmin "google.golang.org/api/sqladmin/v1"
 )
 
 const defaultUserAgent = "custom cloud_sql_proxy version >= 1.10"
@@ -213,7 +213,7 @@ func (s *RemoteCertSource) Local(instance string) (tls.Certificate, error) {
 		}
 		createEphemeralRequest.AccessToken = tok.AccessToken
 	}
-	req := s.serv.SslCerts.CreateEphemeral(p, regionName, &createEphemeralRequest)
+	req := s.serv.Projects.Instances.CreateEphemeral.Create(p, regionName, &createEphemeralRequest)
 
 	var data *sqladmin.SslCert
 	err = backoffAPIRetry("createEphemeral for", instance, func() error {
@@ -274,7 +274,7 @@ func (s *RemoteCertSource) findIPAddr(data *sqladmin.DatabaseInstance, instance 
 func (s *RemoteCertSource) Remote(instance string) (cert *x509.Certificate, addr, name, version string, err error) {
 	p, region, n := util.SplitName(instance)
 	regionName := fmt.Sprintf("%s~%s", region, n)
-	req := s.serv.Instances.Get(p, regionName)
+	req := s.serv.Projects.Instances.Get(p, regionName)
 
 	var data *sqladmin.DatabaseInstance
 	err = backoffAPIRetry("get instance", instance, func() error {
